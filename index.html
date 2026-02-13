@@ -351,15 +351,24 @@
     </div>
 
     <script>
-        // Consolidated word list
-        const words = [
-            'yes', 'no'
-        ]
-
         // Word-specific links - update these with actual URLs
         const wordLinks = {
-            'YES': 'https://www.google.com',
-            'NO': 'https://www.google.com'
+            'YELLOWSTONE':     'https://www.icloud.com/photos/#/sa,DC376C85-CF48-439D-B0CB-F1B007CA7B87',
+            'CUPERTINO':       'https://www.icloud.com/photos/#/sa,6AA77C30-6EA8-4BC4-AC25-BB53D1E03935/',
+            'MIDLAND':         'PLACEHOLDER_LINK_3',
+            'SANFRANCISCO':    'PLACEHOLDER_LINK_4',
+            'ATLANTA':         'PLACEHOLDER_LINK_5',
+            'JAMAICA':         'PLACEHOLDER_LINK_6',
+            'HAKONE':          'PLACEHOLDER_LINK_7',
+            'KYOTO':           'PLACEHOLDER_LINK_8',
+            'TOKYO':           'PLACEHOLDER_LINK_9',
+            'OSAKA':           'PLACEHOLDER_LINK_10',
+            'TETON':           'PLACEHOLDER_LINK_11',
+            'LA':              'PLACEHOLDER_LINK_12',
+            'PASADENA':        'PLACEHOLDER_LINK_13',
+            'RANCHOCUCAMONGA': 'https://www.icloud.com/photos/#/sa,89C4D069-591F-4766-B640-5C7BF0757D05/',
+            'DETROIT':         'PLACEHOLDER_LINK_15',
+            'COCOCAY':         'PLACEHOLDER_LINK_16'
         };
 
         let currentWord = '';
@@ -373,7 +382,8 @@
         // Initialize game
         function initGame() {
             // Dynamically determine available word lengths from the word list
-            const availableLengths = [...new Set(words.map(word => word.length))].sort((a, b) => a - b);
+            const availableWords = Object.keys(wordLinks);
+            const availableLengths = [...new Set(availableWords.map(word => word.length))].sort((a, b) => a - b);
             wordLength = availableLengths[Math.floor(Math.random() * availableLengths.length)];
             currentWord = getRandomWord(wordLength);
             document.getElementById('wordLengthDisplay').textContent = wordLength;
@@ -394,8 +404,9 @@
         }
 
         function getRandomWord(length) {
-            const filteredWords = words.filter(word => word.length === length);
-            return filteredWords[Math.floor(Math.random() * filteredWords.length)].toUpperCase();
+            const availableWords = Object.keys(wordLinks);
+            const filteredWords = availableWords.filter(word => word.length === length);
+            return filteredWords[Math.floor(Math.random() * filteredWords.length)];
         }
 
         function createBoard() {
