@@ -108,6 +108,31 @@
             transition: all 0.3s;
         }
 
+        /* Dynamic tile sizing for longer words */
+        .tile.size-9 {
+            width: 50px;
+            height: 50px;
+            font-size: 28px;
+        }
+
+        .tile.size-10 {
+            width: 45px;
+            height: 45px;
+            font-size: 24px;
+        }
+
+        .tile.size-11 {
+            width: 42px;
+            height: 42px;
+            font-size: 22px;
+        }
+
+        .tile.size-12plus {
+            width: 38px;
+            height: 38px;
+            font-size: 20px;
+        }
+
         .tile.filled {
             border-color: #878a8c;
         }
@@ -195,11 +220,61 @@
             color: #c9b458;
         }
 
+        .word-link {
+            display: none;
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .word-link.show {
+            display: block;
+        }
+
+        .word-link a {
+            display: inline-block;
+            padding: 12px 24px;
+            font-size: 16px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .word-link a:hover {
+            background: #5568d3;
+        }
+
         @media (max-width: 600px) {
             .tile {
                 width: 50px;
                 height: 50px;
                 font-size: 24px;
+            }
+
+            .tile.size-9 {
+                width: 38px;
+                height: 38px;
+                font-size: 20px;
+            }
+
+            .tile.size-10 {
+                width: 34px;
+                height: 34px;
+                font-size: 18px;
+            }
+
+            .tile.size-11 {
+                width: 31px;
+                height: 31px;
+                font-size: 16px;
+            }
+
+            .tile.size-12plus {
+                width: 28px;
+                height: 28px;
+                font-size: 14px;
             }
             
             .key {
@@ -270,17 +345,21 @@
         </div>
 
         <div class="message" id="message"></div>
+        <div class="word-link" id="wordLink">
+            <a href="#" target="_blank" id="wordLinkButton">Look at WORD</a>
+        </div>
     </div>
 
     <script>
-        // Word lists for different lengths
-        const wordLists = {
-            3: ['abc'],
-            4: ['able', 'acid', 'aged', 'also', 'area', 'army', 'away', 'baby', 'back', 'ball', 'band', 'bank', 'base', 'bath', 'bear', 'beat', 'been', 'bell', 'belt', 'best', 'bill', 'bird', 'blow', 'blue', 'boat', 'body', 'bomb', 'bond', 'bone', 'book', 'boom', 'born', 'boss', 'both', 'bowl', 'bulk', 'burn', 'bush', 'busy', 'cake', 'call', 'calm', 'came', 'camp', 'card', 'care', 'case', 'cash', 'cast', 'cell', 'chat', 'chip', 'city', 'club', 'coal', 'coat', 'code', 'cold', 'come', 'cook', 'cool', 'cope', 'copy', 'core', 'cost', 'crew', 'crop', 'dark', 'data', 'date', 'dawn', 'days', 'dead', 'deal', 'dean', 'dear', 'debt', 'deep', 'deny', 'desk', 'dial', 'diet', 'disc', 'disk', 'dog', 'does', 'done', 'door', 'dose', 'down', 'draw', 'drew', 'drop', 'drug', 'dual', 'duke', 'dust', 'duty', 'each', 'earn', 'ease', 'east', 'easy', 'edge', 'else', 'even', 'ever', 'evil', 'exit', 'face', 'fact', 'fail', 'fair', 'fall', 'farm', 'fast', 'fate', 'fear', 'feed', 'feel', 'feet', 'fell', 'felt', 'file', 'fill', 'film', 'find', 'fine', 'fire', 'firm', 'fish', 'five', 'flat', 'flow', 'food', 'foot', 'ford', 'form', 'fort', 'four', 'free', 'from', 'fuel', 'full', 'fund', 'gain', 'game', 'gate', 'gave', 'gear', 'gene', 'gift', 'girl', 'give', 'glad', 'goal', 'goes', 'gold', 'golf', 'gone', 'good', 'govt', 'gray', 'grew', 'grey', 'grow', 'gulf', 'hair', 'half', 'hall', 'hand', 'hang', 'hard', 'harm', 'hate', 'have', 'head', 'hear', 'heat', 'held', 'hell', 'help', 'here', 'hero', 'high', 'hill', 'hire', 'hold', 'hole', 'holy', 'home', 'hope', 'host', 'hour', 'huge', 'hung', 'hunt', 'hurt', 'idea', 'inch', 'into', 'iron', 'item', 'jack', 'jane', 'jean', 'john', 'join', 'jump', 'jury', 'just', 'keen', 'keep', 'kent', 'kept', 'kick', 'kill', 'kind', 'king', 'knee', 'knew', 'know', 'lack', 'lady', 'laid', 'lake', 'land', 'lane', 'last', 'late', 'lead', 'left', 'less', 'life', 'lift', 'like', 'line', 'link', 'list', 'live', 'load', 'loan', 'lock', 'long', 'look', 'lord', 'lose', 'loss', 'lost', 'love', 'luck', 'made', 'mail', 'main', 'make', 'male', 'many', 'mark', 'mass', 'mate', 'math', 'meal', 'mean', 'meat', 'meet', 'menu', 'mere', 'mike', 'mile', 'milk', 'mill', 'mind', 'mine', 'miss', 'mode', 'mood', 'moon', 'more', 'most', 'move', 'much', 'must', 'name', 'navy', 'near', 'neck', 'need', 'news', 'next', 'nice', 'nine', 'none', 'nose', 'note', 'once', 'only', 'onto', 'open', 'oral', 'over', 'pace', 'pack', 'page', 'paid', 'pain', 'pair', 'palm', 'park', 'part', 'pass', 'past', 'path', 'paul', 'peak', 'pick', 'pink', 'pipe', 'plan', 'play', 'plot', 'plus', 'poem', 'poet', 'pole', 'poll', 'pool', 'poor', 'pope', 'port', 'post', 'pour', 'pray', 'pure', 'push', 'race', 'rail', 'rain', 'rank', 'rare', 'rate', 'read', 'real', 'rear', 'rely', 'rent', 'rest', 'rice', 'rich', 'ride', 'ring', 'rise', 'risk', 'road', 'rock', 'role', 'roll', 'rome', 'roof', 'room', 'root', 'rose', 'rule', 'rush', 'ruth', 'safe', 'said', 'sake', 'sale', 'salt', 'same', 'sand', 'save', 'seat', 'seed', 'seek', 'seem', 'seen', 'self', 'sell', 'send', 'sent', 'sept', 'ship', 'shop', 'shot', 'show', 'shut', 'sick', 'side', 'sign', 'sing', 'site', 'size', 'skin', 'slip', 'slow', 'snow', 'soft', 'soil', 'sold', 'sole', 'some', 'song', 'soon', 'sort', 'soul', 'spot', 'star', 'stay', 'step', 'stop', 'such', 'suit', 'sure', 'take', 'tale', 'talk', 'tall', 'tank', 'tape', 'task', 'team', 'tech', 'tell', 'tend', 'term', 'test', 'text', 'than', 'that', 'them', 'then', 'they', 'thin', 'this', 'thus', 'tide', 'tied', 'ties', 'time', 'tiny', 'told', 'tone', 'tony', 'took', 'tool', 'tour', 'town', 'tree', 'trip', 'true', 'tune', 'turn', 'twin', 'type', 'unit', 'upon', 'used', 'user', 'vary', 'vast', 'very', 'vice', 'view', 'vote', 'wage', 'wait', 'wake', 'walk', 'wall', 'want', 'ward', 'warm', 'warn', 'wash', 'wave', 'ways', 'weak', 'wear', 'week', 'well', 'went', 'were', 'west', 'what', 'when', 'whom', 'wide', 'wife', 'wild', 'will', 'wind', 'wine', 'wing', 'wire', 'wise', 'wish', 'with', 'wood', 'word', 'wore', 'work', 'worn', 'yard', 'yeah', 'year', 'your', 'zone'],
-            5: ['about', 'above', 'abuse', 'admit', 'adopt', 'adult', 'after', 'again', 'agent', 'agree', 'ahead', 'alarm', 'album', 'alert', 'alike', 'alive', 'allow', 'alone', 'along', 'alter', 'angel', 'anger', 'angle', 'angry', 'apart', 'appeal', 'apply', 'arena', 'argue', 'arise', 'array', 'aside', 'asset', 'avoid', 'award', 'aware', 'badly', 'baker', 'bases', 'basic', 'basis', 'beach', 'began', 'begin', 'being', 'below', 'bench', 'billy', 'birth', 'black', 'blade', 'blame', 'blind', 'block', 'blood', 'board', 'boost', 'booth', 'bound', 'brain', 'brand', 'bread', 'break', 'breed', 'brief', 'bring', 'broad', 'broke', 'brown', 'build', 'built', 'buyer', 'cable', 'calif', 'carry', 'catch', 'cause', 'chain', 'chair', 'chaos', 'charm', 'chart', 'chase', 'cheap', 'check', 'chest', 'chief', 'child', 'china', 'chose', 'civil', 'claim', 'class', 'clean', 'clear', 'click', 'clock', 'close', 'cloud', 'coach', 'coast', 'could', 'count', 'court', 'cover', 'craft', 'crash', 'crazy', 'cream', 'crime', 'cross', 'crowd', 'crown', 'crude', 'curve', 'cycle', 'daily', 'dance', 'dated', 'dealt', 'death', 'debut', 'delay', 'delta', 'dense', 'depot', 'depth', 'doing', 'doubt', 'dozen', 'draft', 'drama', 'drank', 'drawn', 'dream', 'dress', 'drill', 'drink', 'drive', 'drove', 'dying', 'eager', 'early', 'earth', 'eight', 'elite', 'empty', 'enemy', 'enjoy', 'enter', 'entry', 'equal', 'error', 'event', 'every', 'exact', 'exist', 'extra', 'faith', 'false', 'fault', 'fiber', 'field', 'fifth', 'fifty', 'fight', 'final', 'first', 'fixed', 'flash', 'fleet', 'floor', 'fluid', 'focus', 'force', 'forth', 'forty', 'forum', 'found', 'frame', 'frank', 'fraud', 'fresh', 'front', 'fruit', 'fully', 'funny', 'giant', 'given', 'glass', 'globe', 'going', 'grace', 'grade', 'grand', 'grant', 'grass', 'great', 'green', 'gross', 'group', 'grown', 'guard', 'guess', 'guest', 'guide', 'happy', 'harry', 'heart', 'heavy', 'hence', 'henry', 'horse', 'hotel', 'house', 'human', 'ideal', 'image', 'imply', 'index', 'inner', 'input', 'issue', 'japan', 'jimmy', 'joint', 'jones', 'judge', 'known', 'label', 'large', 'laser', 'later', 'laugh', 'layer', 'learn', 'lease', 'least', 'leave', 'legal', 'lemon', 'level', 'lewis', 'light', 'limit', 'links', 'local', 'logic', 'loose', 'lower', 'lucky', 'lunch', 'lying', 'magic', 'major', 'maker', 'march', 'maria', 'match', 'maybe', 'mayor', 'meant', 'media', 'metal', 'might', 'minor', 'minus', 'mixed', 'model', 'money', 'month', 'moral', 'motor', 'mount', 'mouse', 'mouth', 'music', 'needs', 'never', 'newly', 'night', 'noise', 'north', 'noted', 'novel', 'nurse', 'occur', 'ocean', 'offer', 'often', 'order', 'other', 'ought', 'paint', 'panel', 'paper', 'party', 'peace', 'peter', 'phase', 'phone', 'photo', 'piano', 'piece', 'pilot', 'pitch', 'place', 'plain', 'plane', 'plant', 'plate', 'point', 'pound', 'power', 'press', 'price', 'pride', 'prime', 'print', 'prior', 'prize', 'proof', 'proud', 'prove', 'queen', 'quick', 'quiet', 'quite', 'quote', 'radio', 'raise', 'range', 'rapid', 'ratio', 'reach', 'ready', 'refer', 'right', 'rival', 'river', 'robin', 'roger', 'roman', 'rough', 'round', 'route', 'royal', 'rural', 'scale', 'scene', 'scope', 'score', 'sense', 'serve', 'seven', 'shall', 'shape', 'share', 'sharp', 'sheet', 'shelf', 'shell', 'shift', 'shine', 'shirt', 'shock', 'shoot', 'short', 'shown', 'sight', 'since', 'sixth', 'sixty', 'sized', 'skill', 'sleep', 'slide', 'small', 'smart', 'smile', 'smith', 'smoke', 'solid', 'solve', 'sorry', 'sound', 'south', 'space', 'spare', 'speak', 'speed', 'spend', 'spent', 'split', 'spoke', 'sport', 'staff', 'stage', 'stake', 'stand', 'start', 'state', 'steam', 'steel', 'stick', 'still', 'stock', 'stone', 'stood', 'store', 'storm', 'story', 'strip', 'stuck', 'study', 'stuff', 'style', 'sugar', 'suite', 'super', 'sweet', 'table', 'taken', 'taste', 'taxes', 'teach', 'terry', 'texas', 'thank', 'theft', 'their', 'theme', 'there', 'these', 'thick', 'thing', 'think', 'third', 'those', 'three', 'threw', 'throw', 'tight', 'times', 'title', 'today', 'topic', 'total', 'touch', 'tough', 'tower', 'track', 'trade', 'trail', 'train', 'trait', 'treat', 'trend', 'trial', 'tribe', 'trick', 'tried', 'tries', 'truck', 'truly', 'trust', 'truth', 'twice', 'under', 'undue', 'union', 'unity', 'until', 'upper', 'upset', 'urban', 'usage', 'usual', 'valid', 'value', 'video', 'virus', 'visit', 'vital', 'vocal', 'voice', 'waste', 'watch', 'water', 'wheel', 'where', 'which', 'while', 'white', 'whole', 'whose', 'woman', 'women', 'world', 'worry', 'worse', 'worst', 'worth', 'would', 'wound', 'write', 'wrong', 'wrote', 'young', 'youth'],
-            6: ['accept', 'access', 'across', 'action', 'active', 'actual', 'advice', 'affair', 'affect', 'afford', 'afraid', 'agency', 'agenda', 'almost', 'always', 'amount', 'animal', 'annual', 'answer', 'anyone', 'anyway', 'appeal', 'appear', 'around', 'arrive', 'artist', 'aspect', 'assess', 'assign', 'assist', 'assume', 'attach', 'attack', 'attend', 'august', 'author', 'avenue', 'backed', 'battle', 'beauty', 'became', 'become', 'before', 'behalf', 'behind', 'belief', 'belong', 'berlin', 'better', 'beyond', 'bishop', 'border', 'bottle', 'bottom', 'bought', 'branch', 'breath', 'bridge', 'bright', 'broken', 'budget', 'burden', 'bureau', 'button', 'camera', 'cancer', 'cannot', 'carbon', 'career', 'castle', 'casual', 'caught', 'center', 'centre', 'chance', 'change', 'charge', 'choice', 'choose', 'chosen', 'church', 'circle', 'client', 'closed', 'closer', 'coffee', 'column', 'combat', 'coming', 'common', 'comply', 'copper', 'corner', 'costly', 'county', 'couple', 'course', 'covers', 'create', 'credit', 'crisis', 'custom', 'damage', 'danger', 'dealer', 'debate', 'decade', 'decide', 'defeat', 'defend', 'degree', 'demand', 'depend', 'deputy', 'desert', 'design', 'desire', 'detail', 'detect', 'device', 'differ', 'dinner', 'direct', 'doctor', 'dollar', 'domain', 'double', 'driven', 'driver', 'during', 'easily', 'eating', 'editor', 'effect', 'effort', 'eighth', 'either', 'emerge', 'empire', 'employ', 'enable', 'ending', 'energy', 'engage', 'engine', 'enough', 'ensure', 'entire', 'entity', 'equity', 'escape', 'estate', 'ethnic', 'europe', 'events', 'excess', 'expand', 'expect', 'expert', 'export', 'extend', 'extent', 'fabric', 'facing', 'factor', 'failed', 'fairly', 'fallen', 'family', 'famous', 'father', 'fellow', 'female', 'figure', 'filing', 'finger', 'finish', 'fiscal', 'flight', 'flying', 'follow', 'forced', 'forest', 'forget', 'formal', 'format', 'former', 'foster', 'fought', 'fourth', 'france', 'french', 'friend', 'future', 'garden', 'gather', 'gender', 'geneva', 'genius', 'gentle', 'german', 'global', 'golden', 'govern', 'ground', 'growth', 'guilty', 'handed', 'handle', 'happen', 'hardly', 'headed', 'health', 'height', 'hidden', 'highly', 'hitler', 'holder', 'honest', 'impact', 'import', 'income', 'indeed', 'injury', 'inside', 'intend', 'intent', 'invest', 'island', 'itself', 'jersey', 'joseph', 'junior', 'killed', 'labour', 'landed', 'larger', 'latter', 'launch', 'lawyer', 'leader', 'league', 'leaves', 'legacy', 'length', 'lesson', 'letter', 'likely', 'linked', 'liquid', 'listen', 'little', 'living', 'locate', 'locked', 'london', 'losing', 'lovely', 'luxury', 'mainly', 'making', 'manage', 'manner', 'manual', 'margin', 'marine', 'marked', 'market', 'martin', 'master', 'matter', 'mature', 'medium', 'member', 'memory', 'mental', 'merely', 'merger', 'method', 'middle', 'miller', 'mining', 'minute', 'mirror', 'mobile', 'modern', 'modest', 'module', 'moment', 'morris', 'mostly', 'mother', 'motion', 'moving', 'murder', 'museum', 'mutual', 'myself', 'narrow', 'nation', 'native', 'nature', 'nearby', 'nearly', 'nights', 'nobody', 'normal', 'notice', 'notion', 'number', 'object', 'obtain', 'office', 'offset', 'online', 'option', 'orange', 'origin', 'output', 'oxford', 'packed', 'palace', 'parent', 'partly', 'passed', 'patent', 'people', 'period', 'permit', 'person', 'phrase', 'picked', 'planet', 'played', 'player', 'please', 'plenty', 'pocket', 'police', 'policy', 'politics', 'popular', 'portal', 'potential', 'powder', 'praise', 'prayer', 'prefer', 'pretty', 'priest', 'primary', 'prince', 'prison', 'private', 'profit', 'proper', 'proved', 'proven', 'public', 'purely', 'purple', 'pursue', 'raised', 'random', 'rarely', 'rather', 'rating', 'reader', 'really', 'reason', 'recall', 'recent', 'record', 'reduce', 'reform', 'refuse', 'regard', 'regime', 'region', 'relate', 'relief', 'remain', 'remark', 'remote', 'remove', 'repair', 'repeat', 'replay', 'reply', 'report', 'rescue', 'resort', 'result', 'retain', 'retire', 'return', 'reveal', 'review', 'reward', 'riding', 'rising', 'ritual', 'robert', 'rocket', 'rolled', 'ruling', 'run', 'russia', 'sacred', 'safely', 'safety', 'salary', 'sample', 'saving', 'saying', 'scheme', 'school', 'screen', 'script', 'search', 'season', 'second', 'secret', 'sector', 'secure', 'seeing', 'seek', 'select', 'seller', 'senior', 'series', 'served', 'server', 'settle', 'severe', 'sexual', 'should', 'showed', 'signal', 'signed', 'silent', 'silver', 'simple', 'simply', 'single', 'sister', 'slight', 'smooth', 'social', 'solely', 'sought', 'source', 'soviet', 'speech', 'spirit', 'spoken', 'spread', 'spring', 'square', 'stable', 'status', 'steady', 'stolen', 'strain', 'stream', 'street', 'stress', 'strict', 'strike', 'string', 'strong', 'struck', 'studio', 'submit', 'sudden', 'suffer', 'summer', 'summit', 'supply', 'surely', 'survey', 'switch', 'symbol', 'system', 'taking', 'talent', 'target', 'taught', 'tenant', 'tender', 'tennis', 'thanks', 'theory', 'therapy', 'things', 'thirty', 'though', 'threat', 'thrown', 'ticket', 'timber', 'tissue', 'toward', 'travel', 'treaty', 'trying', 'tunnel', 'turned', 'twelve', 'twenty', 'unable', 'unique', 'united', 'unless', 'unlike', 'update', 'useful', 'valley', 'varied', 'vendor', 'versus', 'vessel', 'victim', 'vision', 'visual', 'volume', 'walker', 'wealth', 'weapon', 'weekly', 'weight', 'widely', 'window', 'winner', 'winter', 'within', 'wonder', 'wooden', 'worker', 'works', 'wright', 'writer', 'yellow'],
-            7: ['ability', 'absence', 'academy', 'account', 'accused', 'achieve', 'acquire', 'address', 'advance', 'adverse', 'advised', 'adviser', 'advocate', 'african', 'against', 'airport', 'alcohol', 'alleged', 'already', 'analyst', 'ancient', 'another', 'anxiety', 'anxious', 'anybody', 'applied', 'appoint', 'approve', 'arrange', 'arrival', 'article', 'artistic', 'assault', 'average', 'backing', 'balance', 'banking', 'barrier', 'battery', 'bearing', 'beating', 'because', 'bedroom', 'benefit', 'beneath', 'besides', 'between', 'biblical', 'binding', 'biology', 'burning', 'cabinet', 'caliber', 'calling', 'capable', 'capital', 'captain', 'caption', 'capture', 'careful', 'carrier', 'caution', 'ceiling', 'central', 'century', 'certain', 'chairman', 'chamber', 'channel', 'chapter', 'charity', 'charlie', 'charter', 'chicken', 'chronic', 'circuit', 'citizen', 'classic', 'climate', 'closing', 'clothes', 'coalition', 'coastal', 'collect', 'college', 'combine', 'comfort', 'command', 'comment', 'compact', 'company', 'compare', 'compete', 'complex', 'concept', 'concern', 'concert', 'conduct', 'confirm', 'conflict', 'connect', 'consent', 'consist', 'constant', 'consult', 'contain', 'content', 'contest', 'context', 'contract', 'contrary', 'control', 'convert', 'correct', 'council', 'counsel', 'counter', 'country', 'county', 'courage', 'crucial', 'crystal', 'cultural', 'culture', 'current', 'cutting', 'dealing', 'decade', 'decline', 'default', 'defence', 'deficit', 'deliver', 'density', 'deposit', 'desktop', 'despite', 'destroy', 'detailed', 'develop', 'devoted', 'digital', 'director', 'discuss', 'disease', 'display', 'dispute', 'distant', 'diverse', 'divided', 'drawing', 'driving', 'dynamic', 'eastern', 'economy', 'elderly', 'element', 'enhance', 'enhance', 'enforce', 'engaged', 'english', 'enhance', 'enhance', 'enormous', 'episode', 'equally', 'essence', 'evening', 'evident', 'exactly', 'examine', 'example', 'exception', 'excited', 'exclude', 'execute', 'exercise', 'exhibit', 'existing', 'expense', 'explain', 'explore', 'express', 'extend', 'extent', 'extinct', 'extreme', 'factory', 'faculty', 'failure', 'falling', 'familiar', 'fashion', 'feature', 'federal', 'feeling', 'fiction', 'fifteen', 'fighting', 'figure', 'filling', 'filming', 'finance', 'finding', 'fishing', 'fitness', 'foreign', 'forever', 'formula', 'fortune', 'forward', 'founder', 'freedom', 'friendly', 'frontier', 'fruit', 'funeral', 'gallery', 'gateway', 'general', 'genetic', 'genuine', 'governor', 'growing', 'habitat', 'hanging', 'heading', 'healthy', 'hearing', 'heavily', 'helping', 'herself', 'highway', 'himself', 'historic', 'history', 'holding', 'holiday', 'horizon', 'horror', 'hospital', 'hostile', 'housing', 'however', 'hundred', 'husband', 'illegal', 'illness', 'imagine', 'immediate', 'impact', 'impress', 'improve', 'include', 'income', 'increase', 'initial', 'inquiry', 'inside', 'install', 'instant', 'instead', 'intense', 'interim', 'involve', 'jealous', 'journal', 'journey', 'judgment', 'justice', 'justify', 'keeping', 'kitchen', 'knowing', 'largely', 'lasting', 'leading', 'learned', 'leisure', 'liberal', 'liberty', 'library', 'license', 'limited', 'linking', 'listing', 'literal', 'literary', 'logical', 'looking', 'loyalty', 'machine', 'manager', 'married', 'massive', 'maximum', 'meaning', 'measure', 'medical', 'meeting', 'member', 'mention', 'message', 'middle', 'military', 'million', 'mineral', 'minimal', 'minimum', 'minister', 'minority', 'missing', 'mission', 'mistake', 'mixture', 'monitor', 'monthly', 'morning', 'musical', 'mystery', 'natural', 'neither', 'nervous', 'network', 'neutral', 'northern', 'notable', 'nothing', 'nowhere', 'nuclear', 'nursery', 'obvious', 'offense', 'officer', 'ongoing', 'opening', 'operate', 'opinion', 'optical', 'organic', 'outcome', 'outdoor', 'outline', 'outside', 'overall', 'package', 'painted', 'painter', 'parking', 'partial', 'partner', 'passage', 'passing', 'passion', 'patient', 'patriot', 'pattern', 'payment', 'penalty', 'pending', 'pension', 'people', 'perfect', 'perform', 'perhaps', 'persist', 'personal', 'picture', 'pioneer', 'plastic', 'playing', 'pleased', 'pleasure', 'pointed', 'popular', 'portion', 'portrait', 'position', 'positive', 'possible', 'poverty', 'powder', 'powerful', 'practical', 'practice', 'precise', 'predict', 'premier', 'premier', 'prepare', 'present', 'preserve', 'pressing', 'pressure', 'pretend', 'prevent', 'previous', 'pricing', 'primary', 'printed', 'printer', 'privacy', 'private', 'problem', 'proceed', 'process', 'produce', 'product', 'profile', 'program', 'project', 'promise', 'promote', 'propose', 'protect', 'protein', 'protest', 'provide', 'publish', 'purpose', 'pushing', 'putting', 'qualify', 'quality', 'quarter', 'quickly', 'radical', 'railway', 'ranging', 'rapidly', 'rational', 'reaching', 'reading', 'reality', 'realize', 'receipt', 'receive', 'recover', 'reflect', 'refugee', 'regards', 'regime', 'regional', 'regular', 'related', 'release', 'relevant', 'relief', 'religion', 'religious', 'remains', 'remove', 'replace', 'replica', 'request', 'require', 'rescue', 'research', 'reserve', 'resident', 'resolve', 'respect', 'respond', 'restore', 'retired', 'retreat', 'revenue', 'reverse', 'rivalry', 'routine', 'running', 'satisfy', 'savings', 'scandal', 'science', 'scratch', 'section', 'segment', 'selling', 'senator', 'sensible', 'serious', 'servant', 'service', 'session', 'setting', 'settled', 'seventh', 'several', 'shortly', 'similar', 'sitting', 'skilled', 'slavery', 'sleeping', 'smoking', 'soldier', 'somehow', 'someone', 'southern', 'spanish', 'speaker', 'special', 'species', 'sponsor', 'station', 'storage', 'strange', 'stretch', 'student', 'studied', 'subject', 'succeed', 'success', 'suggest', 'summary', 'support', 'suppose', 'supreme', 'surface', 'surgery', 'surplus', 'survive', 'suspect', 'sustain', 'teacher', 'telling', 'tend', 'tension', 'terminal', 'terrain', 'theatre', 'theorem', 'therapy', 'thereby', 'thought', 'through', 'tonight', 'touched', 'towards', 'trading', 'traffic', 'tragedy', 'trained', 'transit', 'treated', 'trouble', 'turning', 'typical', 'ultimate', 'uniform', 'unknown', 'unusual', 'utility', 'vaccine', 'various', 'vehicle', 'venture', 'version', 'veteran', 'victory', 'village', 'vintage', 'violate', 'violent', 'virtual', 'visible', 'waiting', 'walking', 'wanting', 'war', 'warning', 'warrant', 'washing', 'wealthy', 'weather', 'website', 'wedding', 'weekend', 'welcome', 'welfare', 'western', 'whereas', 'whereby', 'whether', 'whisper', 'willing', 'winning', 'without', 'witness', 'working', 'worried', 'writing', 'written'],
-            8: ['absolute', 'abstract', 'academic', 'accepted', 'accident', 'accuracy', 'accurate', 'achieved', 'acquired', 'activism', 'activity', 'actually', 'addition', 'adequate', 'adjacent', 'adjusted', 'admitted', 'advanced', 'advocate', 'affected', 'aircraft', 'alliance', 'although', 'aluminum', 'analysis', 'announce', 'anything', 'anywhere', 'apparent', 'appendix', 'approach', 'approval', 'argument', 'artistic', 'assembly', 'assuming', 'athletic', 'attached', 'attitude', 'attorney', 'audience', 'autonomy', 'bacteria', 'baseball', 'bathroom', 'becoming', 'benjamin', 'biological', 'building', 'bulletin', 'business', 'calendar', 'campaign', 'capacity', 'casualty', 'category', 'catholic', 'ceremony', 'chairman', 'champion', 'chemical', 'children', 'circular', 'civilian', 'clearing', 'clinical', 'clothing', 'collapse', 'colonial', 'colorful', 'commence', 'commerce', 'complain', 'complete', 'composed', 'compound', 'comprise', 'computer', 'conclude', 'concrete', 'conflict', 'confused', 'congress', 'consider', 'constant', 'consumer', 'continue', 'contrast', 'convince', 'corridor', 'coverage', 'creative', 'criminal', 'critical', 'crossing', 'cultural', 'currency', 'customer', 'database', 'daughter', 'daylight', 'deadline', 'deciding', 'decision', 'decrease', 'defense', 'delicate', 'delivery', 'democrat', 'depend', 'describe', 'designer', 'detailed', 'diabetes', 'dialogue', 'differ', 'directly', 'director', 'disabled', 'disaster', 'disclose', 'discount', 'discover', 'discuss', 'disorder', 'disposal', 'distance', 'distinct', 'district', 'dividend', 'division', 'doctrine', 'document', 'domestic', 'dominant', 'dominate', 'doubtful', 'dramatic', 'dressing', 'dropping', 'duration', 'dynamics', 'earnings', 'economic', 'educated', 'election', 'electric', 'eligible', 'emerging', 'emphasis', 'employee', 'engaging', 'engineer', 'enormous', 'entirely', 'entrance', 'envelope', 'equality', 'equation', 'estimate', 'eternity', 'ethical', 'evaluate', 'eventual', 'everyday', 'everyone', 'evidence', 'exchange', 'exciting', 'executive', 'exercise', 'explicit', 'exposure', 'extended', 'external', 'facility', 'familiar', 'favorite', 'featured', 'feedback', 'festival', 'finished', 'firewall', 'flagship', 'flexible', 'floating', 'football', 'footstep', 'forecast', 'foremost', 'formerly', 'fourteen', 'fraction', 'fragment', 'frankly', 'frequent', 'friendly', 'frontier', 'function', 'fundamental', 'generate', 'generous', 'genetic', 'governor', 'graduate', 'graphics', 'grateful', 'guarantee', 'guidance', 'hardware', 'headline', 'heritage', 'highland', 'historic', 'homework', 'horizontal', 'hospital', 'household', 'identity', 'ideology', 'imperial', 'implicit', 'improved', 'incident', 'included', 'increase', 'indicate', 'indirect', 'individual', 'industry', 'infected', 'infinite', 'informed', 'inherent', 'innocent', 'inquiry', 'inspired', 'instance', 'integral', 'intended', 'interact', 'interest', 'interior', 'internal', 'interval', 'intimate', 'introduce', 'invasion', 'involved', 'isolated', 'judgment', 'judicial', 'keyboard', 'landlord', 'landmark', 'language', 'laughter', 'learning', 'lifetime', 'lighting', 'likewise', 'literary', 'location', 'magazine', 'magnetic', 'maintain', 'majority', 'marginal', 'marriage', 'material', 'maturity', 'maximize', 'meantime', 'measured', 'mechanical', 'medieval', 'memorial', 'merchant', 'midnight', 'military', 'minimize', 'minister', 'minority', 'mobility', 'moderate', 'molecular', 'monument', 'moreover', 'mortgage', 'mountain', 'mounting', 'movement', 'multiple', 'musical', 'national', 'native', 'naturally', 'necklace', 'negative', 'negotiate', 'neighbor', 'nervous', 'notable', 'notebook', 'numerous', 'observer', 'occasion', 'occupied', 'offering', 'official', 'offshore', 'operator', 'opponent', 'opposite', 'optimism', 'optional', 'ordinary', 'organic', 'organize', 'original', 'outbreak', 'overcome', 'overhead', 'overseas', 'overview', 'painting', 'parallel', 'parental', 'particle', 'partner', 'passport', 'password', 'patience', 'peaceful', 'perception', 'perfect', 'persuade', 'physical', 'pipeline', 'platform', 'pleasant', 'pleasure', 'political', 'portrait', 'position', 'positive', 'possible', 'postpone', 'potential', 'powerful', 'practice', 'precious', 'precise', 'pregnant', 'presence', 'preserve', 'pressing', 'pressure', 'presume', 'previous', 'primarily', 'princess', 'principle', 'printing', 'priority', 'prisoner', 'probable', 'probably', 'producer', 'profound', 'progress', 'property', 'proposal', 'proposed', 'prospect', 'protocol', 'provided', 'provider', 'province', 'publicly', 'purchase', 'pursuant', 'quantity', 'question', 'rational', 'reaction', 'received', 'receiver', 'recovery', 'referred', 'regional', 'register', 'regulate', 'relation', 'relative', 'relevant', 'reliable', 'reliance', 'religion', 'religious', 'remaining', 'remember', 'reminder', 'renowned', 'repeated', 'reporter', 'represent', 'republic', 'required', 'research', 'reserves', 'resident', 'resource', 'response', 'restrict', 'retained', 'retrieve', 'revealed', 'reversal', 'romantic', 'rules', 'sacrifice', 'sanction', 'satellite', 'scenario', 'schedule', 'scrutiny', 'seasonal', 'secondly', 'secretary', 'security', 'segment', 'selected', 'sentence', 'separate', 'sequence', 'sergeant', 'seriously', 'settling', 'shopping', 'shortage', 'shoulder', 'simplify', 'situated', 'slightly', 'software', 'soldier', 'solution', 'somebody', 'someday', 'someone', 'sometime', 'somewhat', 'somewhere', 'southern', 'speaking', 'specific', 'spectator', 'spectrum', 'spiritual', 'sporting', 'standard', 'standing', 'starting', 'statement', 'statistic', 'straight', 'strategic', 'strategy', 'strength', 'strictly', 'striking', 'struggle', 'stunning', 'stunning', 'suburban', 'supposed', 'suppress', 'surgical', 'surprise', 'surround', 'survival', 'survivor', 'swimming', 'symbolic', 'sympathy', 'syndrome', 'tactical', 'teaching', 'teaching', 'tendency', 'terminal', 'terrible', 'territory', 'thinking', 'thorough', 'thousand', 'threaten', 'together', 'tomorrow', 'touching', 'tournament', 'training', 'transfer', 'traveled', 'treasure', 'treasury', 'triangle', 'tropical', 'trustee', 'ultimate', 'umbrella', 'undergo', 'undertake', 'unfortunate', 'universe', 'unlikely', 'usual', 'validate', 'valuable', 'variable', 'vertical', 'victoria', 'violence', 'virtually', 'visible', 'visiting', 'volatile', 'voluntary', 'weakness', 'wealthy', 'whenever', 'wherever', 'withdraw', 'witness', 'wonderful', 'workshop', 'worldwide', 'yourself']
+        // Consolidated word list
+        const words = [
+            'yes', 'no'
+        ]
+
+        // Word-specific links - update these with actual URLs
+        const wordLinks = {
+            'YES': 'https://www.google.com',
+            'NO': 'https://www.google.com'
         };
 
         let currentWord = '';
@@ -293,9 +372,9 @@
 
         // Initialize game
         function initGame() {
-            // Randomly select word length between 4 and 8
-            const wordLengths = [4, 5, 6, 7, 8];
-            wordLength = wordLengths[Math.floor(Math.random() * wordLengths.length)];
+            // Dynamically determine available word lengths from the word list
+            const availableLengths = [...new Set(words.map(word => word.length))].sort((a, b) => a - b);
+            wordLength = availableLengths[Math.floor(Math.random() * availableLengths.length)];
             currentWord = getRandomWord(wordLength);
             document.getElementById('wordLengthDisplay').textContent = wordLength;
             currentRow = 0;
@@ -305,6 +384,7 @@
             
             document.getElementById('message').textContent = '';
             document.getElementById('message').className = 'message';
+            document.getElementById('wordLink').className = 'word-link';
             document.getElementById('attemptsLeft').textContent = maxAttempts;
             
             createBoard();
@@ -314,13 +394,20 @@
         }
 
         function getRandomWord(length) {
-            const words = wordLists[length];
-            return words[Math.floor(Math.random() * words.length)].toUpperCase();
+            const filteredWords = words.filter(word => word.length === length);
+            return filteredWords[Math.floor(Math.random() * filteredWords.length)].toUpperCase();
         }
 
         function createBoard() {
             const board = document.getElementById('board');
             board.innerHTML = '';
+            
+            // Determine size class based on word length
+            let sizeClass = '';
+            if (wordLength === 9) sizeClass = ' size-9';
+            else if (wordLength === 10) sizeClass = ' size-10';
+            else if (wordLength === 11) sizeClass = ' size-11';
+            else if (wordLength >= 12) sizeClass = ' size-12plus';
             
             for (let i = 0; i < maxAttempts; i++) {
                 const row = document.createElement('div');
@@ -328,7 +415,7 @@
                 
                 for (let j = 0; j < wordLength; j++) {
                     const tile = document.createElement('div');
-                    tile.className = 'tile';
+                    tile.className = 'tile' + sizeClass;
                     tile.id = `tile-${i}-${j}`;
                     row.appendChild(tile);
                 }
@@ -347,7 +434,15 @@
         function updateTile(row, col, letter, state = '') {
             const tile = document.getElementById(`tile-${row}-${col}`);
             tile.textContent = letter;
-            tile.className = 'tile' + (letter ? ' filled' : '') + (state ? ` ${state}` : '');
+            
+            // Preserve size class when updating tile state
+            let sizeClass = '';
+            if (wordLength === 9) sizeClass = ' size-9';
+            else if (wordLength === 10) sizeClass = ' size-10';
+            else if (wordLength === 11) sizeClass = ' size-11';
+            else if (wordLength >= 12) sizeClass = ' size-12plus';
+            
+            tile.className = 'tile' + sizeClass + (letter ? ' filled' : '') + (state ? ` ${state}` : '');
         }
 
         function handleKeyPress(key) {
@@ -414,6 +509,7 @@
                 if (guess === currentWord) {
                     gameOver = true;
                     showMessage('🎉 You won!', 'win');
+                    showWordLink(currentWord);
                 } else {
                     currentRow++;
                     document.getElementById('attemptsLeft').textContent = maxAttempts - currentRow;
@@ -421,6 +517,7 @@
                     if (currentRow >= maxAttempts) {
                         gameOver = true;
                         showMessage(`Game Over! The word was: ${currentWord}`, 'lose');
+                        showWordLink(currentWord);
                     }
                 }
             }, wordLength * 200 + 100);
@@ -472,6 +569,15 @@
             const message = document.getElementById('message');
             message.textContent = text;
             message.className = 'message' + (type ? ` ${type}` : '');
+        }
+
+        function showWordLink(word) {
+            const wordLink = document.getElementById('wordLink');
+            const button = document.getElementById('wordLinkButton');
+            button.textContent = `Look at ${word}`;
+            // Use word-specific link from wordLinks object, fallback to generic placeholder
+            button.href = wordLinks[word] || '#placeholder';
+            wordLink.className = 'word-link show';
         }
 
         // Event listeners
