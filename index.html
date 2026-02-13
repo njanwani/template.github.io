@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wordle Game</title>
+    <title>Will you be my valentine?</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
@@ -489,7 +489,7 @@
         </div>
         
         <div class="container">
-            <h1>🎮 Wordle</h1>
+            <h1>💝 Tripple 🌎</h1>
         
         <div class="settings">
             <button id="newGameBtn">New Game</button>
@@ -561,22 +561,20 @@
         // Word-specific links - update these with actual URLs
         const wordLinks = {
             'YELLOWSTONE':     'https://www.icloud.com/photos/#/sa,DC376C85-CF48-439D-B0CB-F1B007CA7B87',
+            'CALTECH':         'https://www.icloud.com/photos/#/sa,FB25C75D-83FE-4AC3-BB99-A0CD4854B74C/',
             'CUPERTINO':       'https://www.icloud.com/photos/#/sa,6AA77C30-6EA8-4BC4-AC25-BB53D1E03935/',
-            'CALTECH':         'https://www.icloud.com/photos/#/sharedalbums/sa,FB25C75D-83FE-4AC3-BB99-A0CD4854B74C/',
-            'MIDLAND':         'PLACEHOLDER_LINK_3',
-            'SANFRANCISCO':    'PLACEHOLDER_LINK_4',
-            'ATLANTA':         'PLACEHOLDER_LINK_5',
-            'JAMAICA':         'PLACEHOLDER_LINK_6',
-            'HAKONE':          'PLACEHOLDER_LINK_7',
-            'KYOTO':           'PLACEHOLDER_LINK_8',
-            'TOKYO':           'PLACEHOLDER_LINK_9',
-            'OSAKA':           'PLACEHOLDER_LINK_10',
-            'TETON':           'PLACEHOLDER_LINK_11',
-            'LA':              'PLACEHOLDER_LINK_12',
-            'PASADENA':        'PLACEHOLDER_LINK_13',
+            'MIDLAND':         'https://www.icloud.com/photos/#/sa,849C0E94-752E-4F24-9E6B-CBFDB7A1CC5F/',
+            'PASADENA':        'https://www.icloud.com/photos/#/sa,3E523BDE-0DFE-4A06-A646-C97E48BA716E/',
+            'KYOTO':           'https://www.icloud.com/photos/#/sa,EA489218-1AD3-4F9D-9BBF-8ECE6375DE44/',
+            'SANFRANCISCO':    'https://www.icloud.com/photos/#/sa,0048A6CB-A674-4874-AAFD-B356B64479BC/',
+            'ATLANTA':         'https://www.icloud.com/photos/#/sa,73E85B3D-123B-407A-9E8A-1C0985B8FC27/',
+            'JAMAICA':         'https://www.icloud.com/photos/#/sa,569C0468-E8DE-4D67-85C4-C2ABA3E28B43/',
+            'TOKYO':           'https://www.icloud.com/photos/#/sa,A2339598-69F8-40EF-9FCE-DF2B134EFCD4/',
+            'TETON':           'https://www.icloud.com/photos/#/sa,A4FDA2DD-B28D-4570-B5E1-27E526B28AF5/',
+            'LA':              'https://www.icloud.com/photos/#/sa,A859CA0A-FD28-4350-AAB3-21DE83D112EA/',
+            'OSAKA':           'https://www.icloud.com/photos/#/sa,EA489218-1AD3-4F9D-9BBF-8ECE6375DE44/',
             'RANCHOCUCAMONGA': 'https://www.icloud.com/photos/#/sa,89C4D069-591F-4766-B640-5C7BF0757D05/',
-            'DETROIT':         'PLACEHOLDER_LINK_15',
-            'COCOCAY':         'PLACEHOLDER_LINK_16'
+            'CARIBBEAN':       'https://www.icloud.com/photos/#/sa,DF0FBFF8-20F8-4FE8-A58F-42B33C4276F7/'
         };
 
         // Location coordinates for map display
@@ -585,19 +583,17 @@
             'CALTECH':         { lat: 34.136227879198906, lng: -118.12236545079739, zoom: 15 },
             'CUPERTINO':       { lat: 37.3230, lng: -122.0322, zoom: 12 },
             'MIDLAND':         { lat: 43.68843798119719, lng: -84.28066871944722, zoom: 11 },
+            'PASADENA':        { lat: 34.1478, lng: -118.1445, zoom: 12 },
+            'KYOTO':           { lat: 35.0116, lng: 135.7681, zoom: 11 },
             'SANFRANCISCO':    { lat: 37.7749, lng: -122.4194, zoom: 11 },
             'ATLANTA':         { lat: 33.7490, lng: -84.3880, zoom: 10 },
             'JAMAICA':         { lat: 18.1096, lng: -77.2975, zoom: 8 },
-            'HAKONE':          { lat: 35.2328, lng: 139.1068, zoom: 11 },
-            'KYOTO':           { lat: 35.0116, lng: 135.7681, zoom: 11 },
             'TOKYO':           { lat: 35.6762, lng: 139.6503, zoom: 10 },
-            'OSAKA':           { lat: 34.6937, lng: 135.5023, zoom: 11 },
             'TETON':           { lat: 43.7904, lng: -110.6818, zoom: 10 },
             'LA':              { lat: 34.0522, lng: -118.2437, zoom: 10 },
-            'PASADENA':        { lat: 34.1478, lng: -118.1445, zoom: 12 },
+            'OSAKA':           { lat: 34.6937, lng: 135.5023, zoom: 11 },
             'RANCHOCUCAMONGA': { lat: 34.1064, lng: -117.5931, zoom: 12 },
-            'DETROIT':         { lat: 42.3314, lng: -83.0458, zoom: 10 },
-            'COCOCAY':         { lat: 25.8267, lng: -77.9167, zoom: 13 }
+            'CARIBBEAN':       { lat: 25.8267, lng: -77.9167, zoom: 7}
         };
 
         let map = null;
