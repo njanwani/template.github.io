@@ -24,6 +24,62 @@
             gap: 20px;
         }
 
+        .game-wrapper {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .word-selector {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .word-selector h3 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        #wordButtons {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .word-button {
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            background: #f0f0f0;
+            border: 2px solid #d3d6da;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            min-width: 80px;
+        }
+
+        .word-button:hover {
+            background: #e0e0e0;
+            border-color: #667eea;
+        }
+
+        .word-button.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+            cursor: default;
+        }
+
         .container {
             background: white;
             border-radius: 20px;
@@ -324,8 +380,27 @@
         }
 
         @media (max-width: 1200px) {
-            body {
+            .game-wrapper {
                 flex-direction: column;
+            }
+
+            .word-selector {
+                max-height: none;
+                overflow-x: auto;
+                width: 100%;
+            }
+
+            #wordButtons {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+
+            .word-selector h3 {
+                width: 100%;
+            }
+
+            .word-button {
+                flex: 0 0 auto;
             }
 
             .map-overlay {
@@ -350,6 +425,12 @@
 
             .map-container {
                 padding: 15px;
+            }
+
+            .word-button {
+                padding: 8px 12px;
+                font-size: 14px;
+                min-width: 60px;
             }
         }
 
@@ -401,8 +482,14 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🎮 Wordle</h1>
+    <div class="game-wrapper">
+        <div class="word-selector">
+            <h3>Select Word</h3>
+            <div id="wordButtons"></div>
+        </div>
+        
+        <div class="container">
+            <h1>🎮 Wordle</h1>
         
         <div class="settings">
             <button id="newGameBtn">New Game</button>
@@ -456,6 +543,7 @@
             <a href="#" target="_blank" id="wordLinkButton">Look at WORD</a>
         </div>
     </div>
+    </div>
 
     <!-- Map Side Panel -->
     <div class="map-overlay" id="mapOverlay">
@@ -474,6 +562,7 @@
         const wordLinks = {
             'YELLOWSTONE':     'https://www.icloud.com/photos/#/sa,DC376C85-CF48-439D-B0CB-F1B007CA7B87',
             'CUPERTINO':       'https://www.icloud.com/photos/#/sa,6AA77C30-6EA8-4BC4-AC25-BB53D1E03935/',
+            'CALTECH':         'https://www.icloud.com/photos/#/sharedalbums/sa,FB25C75D-83FE-4AC3-BB99-A0CD4854B74C/',
             'MIDLAND':         'PLACEHOLDER_LINK_3',
             'SANFRANCISCO':    'PLACEHOLDER_LINK_4',
             'ATLANTA':         'PLACEHOLDER_LINK_5',
@@ -493,8 +582,9 @@
         // Location coordinates for map display
         const locationCoordinates = {
             'YELLOWSTONE':     { lat: 44.4280, lng: -110.5885, zoom: 9 },
+            'CALTECH':         { lat: 34.136227879198906, lng: -118.12236545079739, zoom: 15 },
             'CUPERTINO':       { lat: 37.3230, lng: -122.0322, zoom: 12 },
-            'MIDLAND':         { lat: 31.9973, lng: -102.0779, zoom: 11 },
+            'MIDLAND':         { lat: 43.68843798119719, lng: -84.28066871944722, zoom: 11 },
             'SANFRANCISCO':    { lat: 37.7749, lng: -122.4194, zoom: 11 },
             'ATLANTA':         { lat: 33.7490, lng: -84.3880, zoom: 10 },
             'JAMAICA':         { lat: 18.1096, lng: -77.2975, zoom: 8 },
@@ -520,14 +610,57 @@
         let maxAttempts = 6;
         let gameOver = false;
         let keyStates = {}; // Track keyboard key colors
+        let currentWordIndex = 0;
+        let wordList = []; // Array of words from wordLinks
+
+        // Initialize word list and buttons
+        function initWordList() {
+            wordList = Object.keys(wordLinks);
+            const buttonContainer = document.getElementById('wordButtons');
+            buttonContainer.innerHTML = '';
+            
+            wordList.forEach((word, index) => {
+                const button = document.createElement('button');
+                button.className = 'word-button';
+                button.textContent = index + 1;
+                button.dataset.index = index;
+                button.addEventListener('click', () => selectWord(index));
+                buttonContainer.appendChild(button);
+            });
+        }
+
+        // Select a word by index
+        function selectWord(index) {
+            if (index === currentWordIndex && !gameOver) {
+                return; // Already on this word and game not over
+            }
+            
+            currentWordIndex = index;
+            currentWord = wordList[index];
+            wordLength = currentWord.length;
+            
+            // Update active button
+            const buttons = document.querySelectorAll('.word-button');
+            buttons.forEach((btn, i) => {
+                if (i === index) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            
+            // Reset game for this word
+            resetGame();
+        }
 
         // Initialize game
         function initGame() {
-            // Dynamically determine available word lengths from the word list
-            const availableWords = Object.keys(wordLinks);
-            const availableLengths = [...new Set(availableWords.map(word => word.length))].sort((a, b) => a - b);
-            wordLength = availableLengths[Math.floor(Math.random() * availableLengths.length)];
-            currentWord = getRandomWord(wordLength);
+            initWordList();
+            selectWord(0); // Start with first word
+        }
+
+        // Reset game state for current word
+        function resetGame() {
             document.getElementById('wordLengthDisplay').textContent = wordLength;
             currentRow = 0;
             currentTile = 0;
@@ -542,7 +675,7 @@
             createBoard();
             resetKeyboard();
             
-            console.log('New word:', currentWord); // For debugging
+            console.log('Current word:', currentWord); // For debugging
         }
 
         function getRandomWord(length) {
@@ -754,7 +887,11 @@
             }
         });
 
-        document.getElementById('newGameBtn').addEventListener('click', initGame);
+        document.getElementById('newGameBtn').addEventListener('click', () => {
+            if (currentWord) {
+                resetGame();
+            }
+        });
 
         // Map functions
         function showLocationOnMap(location) {
